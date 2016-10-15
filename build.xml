@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="run" name="TrecEvalOO">
+
+	<property name="src.dir" value="src" />
+	<property name="fwsrc.dir" value="src/uniud" />
+	<property name="out.dir" value="out" />
+	<property name="classes.dir" value="out/production/trecevaloo"/>
+	<property name="jar.dir" value="out/jar"/>
+
+
+	<!-- compile the framework obtaining TrecEvalOO.jar. Just call: "ant framework_jar".
+		 Jar file is in out/jar path.
+	     You can use the .jar in your own project and create your own TrecEvalOO personalized
+	     framework instance -->
+
+	<target name="compile" depends="clean" description="Compiles all .java framework files.">
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${fwsrc.dir}" destdir="${classes.dir}"/>
+	</target>
+
+
+	<target name="framework_jar" depends="compile" description="Creates the JAR file of framework.">
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		</jar>
+	</target>
+
+
+	<!-- compile and run according to the Main class position. Just call: "ant run".
+	 	 NB: In this case: Main.java class must be into user package,
+	     and user instancies also should be in user package -->
+
+	<property name="main-class" value="user.Main"/>
+	<property name="test-class" value="test.Test"/>
+
+
+	<target name="compile_inst" depends="clean" description="Compiles all .java files.">
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+	</target>
+
+
+	<target name="jar_inst" depends="compile_inst" description="Creates the JAR file with a Main-Class.">
+	    <mkdir dir="${jar.dir}"/>
+	    <jar destfile="${jar.dir}/${ant.project.name}_inst.jar" basedir="${classes.dir}">
+	      <manifest>
+	        <attribute name="Main-Class" value="${main-class}"/>
+	      </manifest>
+	    </jar>
+  	</target>
+
+
+	<target name="jar_test" depends="compile_inst" description="Creates the JAR file with a Main-Class.">
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/${ant.project.name}_test.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${test-class}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar_inst" description="Runs the main-class in the JAR file.">
+    	<java jar="${jar.dir}/${ant.project.name}_inst.jar" fork="true"/>
+    </target>
+
+	<target name="test" depends="jar_test" description="Runs the test-class in the JAR file.">
+		<java jar="${jar.dir}/${ant.project.name}_test.jar" fork="true"/>
+	</target>
+
+
+	<!-- Generate javadoc for current project into ${doc.dir}. Just call: "ant doc". -->
+
+	<property name="doc.dir" location="doc"/>
+
+	<target name="doc"  depends="cleandoc" description="generate documentation">
+		<mkdir dir="${doc.dir}"/>
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
+	</target>
+
+
+	<!-- cleaning targets -->
+
+	<target name="cleandoc">
+		<delete dir="${doc.dir}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${out.dir}"/>
+	</target>
+
+</project>
