@@ -1,0 +1,2 @@
+Here "." you should create a folder "run" ("./run") and put inside it the run files from the collection you want to evaluate.
+To use TREC8 you shoud put inside  "./run/" the "input.<systemName>" files.
